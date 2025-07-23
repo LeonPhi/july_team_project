@@ -12,4 +12,5 @@ Pillow==11.3.0
 protobuf==6.31.1
 python_bcrypt==0.3.2
 Requests==2.32.4
+sqlalchemy
 streamlit==1.46.1
