@@ -8,18 +8,16 @@ from io import BytesIO
 import os
 import base64
 import streamlit as st
-from dotenv import load_dotenv
 
-# 讀取 API 金鑰
-load_dotenv()
+key = st.secrets['Gemini']['API_KEY']
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
-    google_api_key=os.getenv('API_KEY'),
+    google_api_key=key,
 )
 
 client = genai.Client(
-        api_key=os.getenv('API_KEY'),
+        api_key=key,
 )
 
 st.title('食譜推薦')
