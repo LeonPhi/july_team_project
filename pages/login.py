@@ -152,7 +152,7 @@ if use_face_login:
             unknown_face_encodings = face_recognition.face_encodings(img_np)
             if not unknown_face_encodings:
                 st.error('No face detected in captured image.')
-                unknown_encoding = False
+                unknown_encoding = []
             else:
                 unknown_encoding = unknown_face_encodings[0]
 
