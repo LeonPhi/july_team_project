@@ -32,7 +32,7 @@ st.title('Recipe 食譜推薦')
 #}
 
 #user_input = "雞蛋、牛奶、麵包、香蕉、蘋果、奶油，請給中式早餐食譜。"
-st.text(r'$\textsf{請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。}$')
+st.text('請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。')
 user_input = st.text_input(r'$\textsf{(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )}$', key=1)
 
 #image_urls = [
