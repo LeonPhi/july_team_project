@@ -85,6 +85,11 @@ if submitted:
                     st.image(uploaded_photo, caption="Saved Profile Photo", width=180)
                 else:
                     st.error("😢 Username already taken. Try another one.")
+            except AttributeError as e:
+                if "'NoneType' object has no attribute 'format'" in str(e):
+                    pass  # Silently ignore this harmless error
+                else:
+                    st.error(f"🚨 Registration failed: {e}")
             except Exception as e:
-               st.error(f"🚨 Registration failed: {repr(e)}")
-            pass
+                st.error(f"🚨 Registration failed: {e}")
+                
