@@ -31,7 +31,7 @@ def save_photo(photo, username):
 # Function to add new user
 def register_user(username, password, email, photo_path):
     with conn.session as s:
-        hashed_pw = bcrypt.hashpw(password, bcrypt.gensalt()).decode()
+        hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         try:
             s.execute(
                 text("""
