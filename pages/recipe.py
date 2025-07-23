@@ -23,12 +23,12 @@ client = genai.Client(
 st.title('Recipe 食譜推薦')
 
 # 假設使用者資訊
-user_profile = {
-    "age": 30,
-    #"conditions": ["高血壓", "糖尿病"],
-    "conditions": ["過胖"],
-    "dietary_preferences": ["過敏原:花生"],
-}
+#user_profile = {
+#    "age": 30,
+#    #"conditions": ["高血壓", "糖尿病"],
+#    "conditions": ["過胖"],
+#    "dietary_preferences": ["過敏原:花生"],
+#}
 
 #user_input = "雞蛋、牛奶、麵包、香蕉、蘋果、奶油，請給中式早餐食譜。"
 user_input = st.text_input('''請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。
