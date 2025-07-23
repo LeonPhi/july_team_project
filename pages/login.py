@@ -157,6 +157,8 @@ if use_face_login:
         users = cursor.fetchall()
         conn.close()
 
+        user_result = {"status": "fail"}
+        
         for user in users:
             username, password, email, photo_path = user
             known_image_path = os.path.join("profile_photos", os.path.basename(photo_path))
