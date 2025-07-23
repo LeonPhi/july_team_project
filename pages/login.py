@@ -14,14 +14,14 @@ conn = st.connection('sqlite', type='sql')
 
 # Initiate Table
 with conn.session as s: 
-    s.execute('''
+    s.execute(text('''
         CREATE TABLE IF NOT EXISTS users (
             username TEXT UNIQUE,
             password TEXT,
             email TEXT,
             photo_path TEXT
         )
-    ''')
+    '''))
     s.commit()
 
 # Enlarged gradient heading
