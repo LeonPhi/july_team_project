@@ -161,7 +161,7 @@ if use_face_login:
 
         # Check known images
         with conn.session as s:
-            result = s.execute("SELECT username, email, photo_path FROM users")
+            result = s.execute(text("SELECT username, email, photo_path FROM users"))
             users = result.fetchall()
 
         user_result = {"status": "fail"}
