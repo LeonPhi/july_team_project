@@ -42,7 +42,7 @@ user_input = st.text_input('''請輸入食品材料、年紀、身體狀況、�
 #   "https://images.albertsons-media.com/is/image/ABS/136200003-ECOM?$ng-ecom-pdp-desktop$&defaultImage=Not_Available",
 #]
 images = []
-st.write("也可以輸入材料圖片 (最多4張，可以拍照搭配上傳。單張照片可以多種食材)")
+st.text("也可以輸入材料圖片 (最多4張，可以拍照搭配上傳。單張照片可以多種食材)")
 uploaded_photos = st.file_uploader("", \
                 type=["png", "jpeg", "jpg", "webp", "avif"], accept_multiple_files=True)
 if uploaded_photos:
