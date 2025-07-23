@@ -9,14 +9,14 @@ conn = st.connection('sqlite', type='sql')
 # Function to create the table if it doesn't exist
 def create_table():
     with conn.session as s:
-        s.execute('''
+        s.execute(text('''
             CREATE TABLE IF NOT EXISTS users (
                 username TEXT UNIQUE,
                 password TEXT,
                 email TEXT,
                 photo_path TEXT
             )
-        ''')
+        '''))
         s.commit()
 
 # Save uploaded photo to a directory
