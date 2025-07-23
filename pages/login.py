@@ -10,7 +10,6 @@ from sqlite3 import IntegrityError
 import requests
 import bcrypt
 
-st.write("bcrypt version:", bcrypt.__version__)
 conn = st.connection('sqlite', type='sql')
 
 # Initiate Table
