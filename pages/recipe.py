@@ -20,7 +20,7 @@ client = genai.Client(
         api_key=key,
 )
 
-st.title('食譜推薦')
+st.title('Recipe 食譜推薦')
 
 # 假設使用者資訊
 user_profile = {
