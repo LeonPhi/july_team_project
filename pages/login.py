@@ -162,7 +162,7 @@ if use_face_login:
             st.error(f'Image processing failed: {str(e)}')
 
         # Check known images
-        if unknown_encoding:
+        if unknown_encoding.any():
             with conn.session as s:
                 result = s.execute(text("SELECT username, email, photo_path FROM users"))
                 users = result.fetchall()
