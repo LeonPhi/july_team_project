@@ -32,8 +32,9 @@ st.title('Recipe 食譜推薦')
 #}
 
 #user_input = "雞蛋、牛奶、麵包、香蕉、蘋果、奶油，請給中式早餐食譜。"
-user_input = st.text_input(r'''$\textsf{請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。
-                           (也可以描述你要的樣式 (中式西式、早餐晚餐等等) )}$''', key=1)
+st.text(r'$\textsf{請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。}$')
+user_input = st.text_input(r'$\textsf{(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )}$', key=1)
+
 #image_urls = [
 #   "https://nutritionsource.hsph.harvard.edu/wp-content/uploads/2024/11/AdobeStock_118383793.jpeg",
 #   "https://orchardfruit.com/cdn/shop/files/Red-Onion-1-lb.-The-Orchard-Fruit-72141081.jpg?crop=center&height=1200&v=1722937869&width=1200",
@@ -41,6 +42,7 @@ user_input = st.text_input(r'''$\textsf{請輸入食品材料、年紀、身體�
 #   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzlXU9AXfNSFjZmBsOW-JyvP6WEhJL1eOSHA&s",
 #   "https://images.albertsons-media.com/is/image/ABS/136200003-ECOM?$ng-ecom-pdp-desktop$&defaultImage=Not_Available",
 #]
+
 images = []
 uploaded_photos = st.file_uploader(r"$\textsf{也可以輸入材料圖片\\(最多4張，可以拍照搭配上傳。單張照片可以多種食材)}$", \
                 type=["png", "jpeg", "jpg", "webp", "avif"], accept_multiple_files=True)
