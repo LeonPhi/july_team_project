@@ -58,24 +58,25 @@ with st.form("register_form"):
     submitted = st.form_submit_button("Register")
 
 if submitted:
-    create_table()
+    with st.spinner("請稍等..."):
+        create_table()
 
-    if not uploaded_photo and not camera_photo:
-        st.warning("📸 Please upload a profile photo for face recognition.")
-    elif not all([username, password, email]):
-        st.warning("⚠️ Please fill out all fields before submitting.")
-    else:
-        if camera_photo:
-            photo_path = save_photo(camera_photo, username)
+        if not uploaded_photo and not camera_photo:
+            st.warning("📸 Please upload a profile photo for face recognition.")
+        elif not all([username, password, email]):
+            st.warning("⚠️ Please fill out all fields before submitting.")
         else:
-            photo_path = save_photo(uploaded_photo, username)
-        try:
-            success = register_user(username, password, email, photo_path)
-            if success:
-                st.success(f"🎉 Welcome, {username}! You’ve been registered.")
-                st.image(uploaded_photo, caption="Saved Profile Photo", width=180)
+            if camera_photo:
+                photo_path = save_photo(camera_photo, username)
             else:
-                st.error("😢 Username already taken. Try another one.")
-        except Exception as e:
-#            st.error(f"🚨 Registration failed: {repr(e)}")
-            pass
+                photo_path = save_photo(uploaded_photo, username)
+            try:
+                success = register_user(username, password, email, photo_path)
+                if success:
+                    st.success(f"🎉 Welcome, {username}! You’ve been registered.")
+                    st.image(uploaded_photo, caption="Saved Profile Photo", width=180)
+                else:
+                    st.error("😢 Username already taken. Try another one.")
+            except Exception as e:
+#               st.error(f"🚨 Registration failed: {repr(e)}")
+                pass
