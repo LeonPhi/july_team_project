@@ -152,7 +152,9 @@ if use_face_login:
             unknown_face_encodings = face_recognition.face_encodings(img_np)
             if not unknown_face_encodings:
                 st.error('No face detected in captured image.')
-            unknown_encoding = unknown_face_encodings[0]
+                unknown_encoding = False
+            else:
+                unknown_encoding = unknown_face_encodings[0]
 
         except UnidentifiedImageError:
             st.error('Uploaded image format not supported.')
@@ -160,36 +162,40 @@ if use_face_login:
             st.error(f'Image processing failed: {str(e)}')
 
         # Check known images
-        with conn.session as s:
-            result = s.execute(text("SELECT username, email, photo_path FROM users"))
-            users = result.fetchall()
+        if unknown_encoding:
+            with conn.session as s:
+                result = s.execute(text("SELECT username, email, photo_path FROM users"))
+                users = result.fetchall()
 
-        user_result = {"status": "fail"}
+            user_result = {"status": "fail"}
 
-        for user in users:
-            username, email, photo_path = user
-            known_image_path = os.path.join("profile_photos", os.path.basename(photo_path))
+            for user in users:
+                username, email, photo_path = user
+                known_image_path = os.path.join("profile_photos", os.path.basename(photo_path))
 
-            if os.path.exists(known_image_path):
-                known_image = face_recognition.load_image_file(known_image_path)
-                known_encodings = face_recognition.face_encodings(known_image)
-                if not known_encodings:
-                    continue
-            result = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.45)
-            if result[0]:
-                user_result = {
-                    "status": "success",
-                    "data": {
-                        "photo": known_image,
-                        "username": username,
-                        "email": email,
+                if os.path.exists(known_image_path):
+                    known_image = face_recognition.load_image_file(known_image_path)
+                    known_encodings = face_recognition.face_encodings(known_image)
+                    if not known_encodings:
+                        continue
+                result = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.45)
+                if result[0]:
+                    user_result = {
+                        "status": "success",
+                        "data": {
+                            "photo": known_image,
+                            "username": username,
+                            "email": email,
+                        }
                     }
-                }
-            else:
-                user_result = {
-                    "status": "fail",
-                }
-
+                else:
+                    user_result = {
+                        "status": "fail",
+                    }
+        else:
+            user_result = {
+                        "status": "none",
+                    }
         if user_result["status"] == "success":
             st.success("🎉 Face Login Successful")
             st.session_state.logged_in = True
@@ -199,8 +205,10 @@ if use_face_login:
                 if k != "photo":
                     st.markdown(f"**{k.replace('_',' ').title()}:** {v}")
             st.rerun()
-        else:
+        elif user_result["status"]=="fail":
             st.error('Face not recognized.')
+        else:
+            pass
 
 # Traditional Login       
 else:
