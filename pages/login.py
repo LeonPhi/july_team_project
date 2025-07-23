@@ -178,7 +178,7 @@ if use_face_login:
                     known_encodings = face_recognition.face_encodings(known_image)
                     if not known_encodings:
                         continue
-                result = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.45)
+                result = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
                 if result[0]:
                     user_result = {
                         "status": "success",
