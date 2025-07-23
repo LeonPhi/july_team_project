@@ -31,7 +31,8 @@ user_profile = {
 }
 
 #user_input = "雞蛋、牛奶、麵包、香蕉、蘋果、奶油，請給中式早餐食譜。"
-user_input = st.text_input('輸入食品材料，也可以描述你要的樣式 (中式西式、早餐晚餐等等)', key=1)
+user_input = st.text_input('''請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。
+                           (也可以描述你要的樣式 (中式西式、早餐晚餐等等) )''', key=1)
 #image_urls = [
 #   "https://nutritionsource.hsph.harvard.edu/wp-content/uploads/2024/11/AdobeStock_118383793.jpeg",
 #   "https://orchardfruit.com/cdn/shop/files/Red-Onion-1-lb.-The-Orchard-Fruit-72141081.jpg?crop=center&height=1200&v=1722937869&width=1200",
@@ -48,13 +49,12 @@ if uploaded_file:
 
 # Gemini prompt
 prompt = f"""
-你是食譜推薦小幫手，使用者是{user_profile['age']}歲，有{"、".join(user_profile['conditions'])}。
-使用者的飲食偏好是：{"、".join(user_profile['dietary_preferences'])}。
+你是食譜推薦小幫手，會描述年紀、身體狀況、過敏原和飲食偏好。
 
-使用者的食品材料和建議有：「{user_input}」。
+使用者的食品材料和建議等等是：「{user_input}」。
 
 請幫我：
-1. 根據使用者的年齡、健康狀況和有的材料，推薦一個適合的食譜
+1. 根據使用者的年齡、健康狀況和有的材料等，推薦一個適合的食譜
 2. 回答請用繁體中文
 3. 都不用太多字，簡潔明瞭
 """
