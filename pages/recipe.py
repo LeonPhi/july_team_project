@@ -9,6 +9,7 @@ import os
 import base64
 import streamlit as st
 from utils.sidebar import render_sidebar
+from utils.speech import speech_to_text
 
 key = st.secrets['Gemini']['API_KEY']
 
@@ -32,8 +33,16 @@ st.title('Recipe 食譜推薦')
 #}
 
 #user_input = "雞蛋、牛奶、麵包、香蕉、蘋果、奶油，請給中式早餐食譜。"
+use_speech = st.toggle(r"$\textsf{\Large 使用語音輸入}$", value=True)
 st.text('請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。')
-user_input = st.text_input(r'$\textsf{(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )}$', key=1)
+if use_speech:
+    st.text('(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )')
+    user_input = speech_to_text()
+else:
+    user_input = st.text_input(r'$\textsf{(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )}$', key=1)
+
+st.text('')
+st.text('')
 
 #image_urls = [
 #   "https://nutritionsource.hsph.harvard.edu/wp-content/uploads/2024/11/AdobeStock_118383793.jpeg",
@@ -59,7 +68,7 @@ if camera_photo:
 # Gemini prompt
 prompt = f"""
 你是食譜推薦小幫手，使用者會描述年紀、身體狀況、過敏原和飲食偏好。
-
+使用者有時也會搭配圖片。
 使用者的食品材料和建議等等是：「{user_input}」。
 
 請幫我：
