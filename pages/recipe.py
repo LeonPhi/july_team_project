@@ -96,9 +96,9 @@ if images:
         img_messages.append({"type": "text", "text": "請描述照片裡有什麼食物。"})
         img_result = llm.invoke([HumanMessage(content=img_messages)])
         user_messages.append({"type": "text", "text": img_result.content})
-human_messages = HumanMessage(content=user_messages)
 
 if st.button('生成食譜'):
+    human_messages = HumanMessage(content=user_messages)
     result = llm.invoke([human_messages])
     st.text_area('AI', result.content, height=400)
 
