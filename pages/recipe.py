@@ -77,27 +77,27 @@ prompt = f"""
 3. 都不用太多字，簡潔明瞭
 """
 
-user_messages = [{"type": "text", "text": prompt}]
-if images:
-    if len(images) > 1:
-       for image in images:
-           encoded_image = base64.b64encode(image).decode("utf-8")
-           user_messages.append({
-               "type": "image_url",
-               "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}
-           })
-    else:
-       # 如果只有一張圖片，直接使用
-        encoded_image = base64.b64encode(images[0]).decode("utf-8")
-        img_messages = [{
-            "type": "image_url",
-            "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}
-        }]
-        img_messages.append({"type": "text", "text": "請描述照片裡有什麼食物。"})
-        img_result = llm.invoke([HumanMessage(content=img_messages)])
-        user_messages.append({"type": "text", "text": img_result.content})
-
 if st.button('生成食譜'):
+    user_messages = [{"type": "text", "text": prompt}]
+    if images:
+        if len(images) > 1:
+            for image in images:
+                encoded_image = base64.b64encode(image).decode("utf-8")
+                user_messages.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}
+                })
+        else:
+            # 如果只有一張圖片，直接使用
+            encoded_image = base64.b64encode(images[0]).decode("utf-8")
+            img_messages = [{
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}
+            }]
+            img_messages.append({"type": "text", "text": "請描述照片裡有什麼食物。"})
+            img_result = llm.invoke([HumanMessage(content=img_messages)])
+            user_messages.append({"type": "text", "text": img_result.content})
+            
     human_messages = HumanMessage(content=user_messages)
     result = llm.invoke([human_messages])
     st.text_area('AI', result.content, height=400)
