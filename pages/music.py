@@ -32,7 +32,6 @@ if camera_photo:
 		st.write(r"$\textsf{\Large " + st.session_state.emotion + "}$")
 
 emotion = st.session_state.get("emotion", None)
-st.write(r"$\textsf{\Large " + emotion + "}$")
 
 if st.button(r"$\textsf{推薦音樂 Recommed Songs}$"):
 	if not(emotion):
