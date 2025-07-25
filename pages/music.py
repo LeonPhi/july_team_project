@@ -33,12 +33,22 @@ if camera_photo:
 
 emotion = st.session_state.get("emotion", None)
 
-if st.button(r"$\textsf{推薦音樂 Recommed Songs}$"):
-	if not(emotion):
-		st.warning("請先偵測情緒")
-	elif not(age_range):
-		st.warning("請先選類別")
-	else:
-		webbrowser.open(f"https://www.youtube.com/results?search_query={lang}+{emotion}+song+{singer}+{age_range}")
+if not(emotion):
+	st.info("請先偵測情緒")
+
+elif not(age_range):
+	st.info("請先選類別")
+
+else:
+	st.link_button(r"$\textsf{推薦音樂 Recommed Songs}$", 
+		f"https://www.youtube.com/results?search_query={lang}+{emotion}+song+{singer}+{age_range}")
+	
+#if st.button(r"$\textsf{推薦音樂 Recommed Songs}$"):
+#	if not(emotion):
+#		st.warning("請先偵測情緒")
+#	elif not(age_range):
+#		st.warning("請先選類別")
+#	else:
+#		webbrowser.open(f"https://www.youtube.com/results?search_query={lang}+{emotion}+song+{singer}+{age_range}")
 
 render_sidebar()
