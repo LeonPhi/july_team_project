@@ -6,7 +6,6 @@ face_recognition_models @ git+https://github.com/ageitgey/face_recognition_model
 face_recognition @ git+https://github.com/thetoby9944/face_recognition
 ipython==8.12.3
 opencv_python
-libgl1-mesa-glx
 langchain_core==0.3.72
 langchain_google_genai==2.1.8
 google_genai
