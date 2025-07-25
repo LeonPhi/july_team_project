@@ -29,6 +29,7 @@ if camera_photo:
 			enforce_detection = False
 		)
 		st.session_state.emotion = result[0]["dominant_emotion"]
+		st.write(r"$\textsf{\Large " + st.session_state.emotion + "}$")
 
 emotion = st.session_state.get("emotion", None)
 st.write(r"$\textsf{\Large " + emotion + "}$")
