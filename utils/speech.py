@@ -2,7 +2,7 @@ from google import genai
 from google.genai import types
 import streamlit as st 
 
-def speech_to_text():
+def speech_to_text((key: int):
     client = genai.Client(
         api_key=st.secrets['Gemini']['API_KEY']
     )
@@ -11,7 +11,7 @@ def speech_to_text():
         system_instruction="Based on the **audio's** language, please respond with the same language as the **audio**."
     )
 
-    audio = st.audio_input("語音輸入")
+    audio = st.audio_input("語音輸入", key=key)
 
     def generate_language():
         response = client.models.generate_content(
