@@ -37,7 +37,7 @@ use_speech = st.toggle(r"$\textsf{\Large 使用語音輸入}$", value=True)
 st.text('請輸入食品材料、年紀、身體狀況、過敏原和飲食偏好。')
 if use_speech:
     st.text('(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )')
-    user_input = speech_to_text()
+    user_input = speech_to_text(1)
 else:
     user_input = st.text_input(r'$\textsf{(也可以描述你要的樣式 (中式西式、早餐晚餐等等) )}$', key=1)
 
