@@ -59,11 +59,23 @@ def create_image():
             st.image(image, caption="賀卡", use_container_width=True)
             return response.text, image
 
+client_id = st.secrets['gmail_client']['CLIENT_ID']
+client_secret = st.secrets['gmail_client']['CLIENT_SECRET']
+client_config = {
+    "installed": {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uris": ['https://dailygenie.streamlit.app'],
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token"
+    }
+}
+
 def authorize_user():
-    flow = Flow.from_client_secrets_file(
-        'client_secret.json',
+    flow = Flow.from_client_config(
+        client_config,
         scopes=['https://www.googleapis.com/auth/gmail.send'],
-        redirect_uri='https://dailygenie.streamlit.app'  # Change to actual streamlit app link when deploying
+        redirect_uri='http://localhost:8501'  # Change to actual streamlit app link when deploying
     )
     auth_url, _ = flow.authorization_url(prompt='consent')
     st.link_button("Authorize Gmail Access", auth_url)
@@ -119,7 +131,6 @@ if occasion:
             st.error('Invalid E-mail 無效的電子郵件: ' + str(e))
     else:
         st.info('請先輸入收件者的 E-mail.')
-
 
 
 render_sidebar()
