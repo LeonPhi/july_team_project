@@ -42,7 +42,7 @@ def create_image():
                     The style of the card should be clean, with vibrant pastel colors, 
                     soft lighting, and a heartwarming feel. Keep the background simple and elegant.
 
-                    Details:{details}
+                    Details of EMAIL and GREETING CARD:{details}
 
                     **Don't ask for extra detail if empty, just generate a generic e-mail.**
 
