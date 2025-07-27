@@ -128,7 +128,7 @@ if occasion:
 #        try:
 #            v = validate_email(reciever)
 #            reciever = v.normalized
-            st.info('請稍等約 10 秒鐘再按生成按鈕')
+            st.info('右上方的小人運動完後，請再稍等約 10 秒鐘再按生成按鈕')
             if st.button('生成電子郵件、賀卡'):
                 with st.spinner('請稍等...'):
                     lang = text_language(occasion)
