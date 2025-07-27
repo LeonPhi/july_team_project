@@ -128,6 +128,7 @@ if occasion:
 #        try:
 #            v = validate_email(reciever)
 #            reciever = v.normalized
+            st.info('請稍等片刻再生成語音')
             if st.button('生成電子郵件、賀卡'):
                 with st.spinner('請稍等...'):
                     lang = text_language(occasion)
