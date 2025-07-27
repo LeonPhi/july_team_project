@@ -28,7 +28,7 @@ def text_language(text):
             contents=[
                 f"""Please return what language this text is in: {text}
                     Example: TEXT- I am 10 years old. RETURN- English
-                    Example: TEXT- 我現在十歲。 RETURN- Chinese
+                    Example: TEXT- 我現在十歲。 RETURN- Chinese (Default: Traditional)
                     Example: TEXT- Ich bin sechzehn Jahre alt. RETURN- German""",
             ],
         )
@@ -128,7 +128,7 @@ if occasion:
 #        try:
 #            v = validate_email(reciever)
 #            reciever = v.normalized
-            st.info('請稍等片刻再生成語音')
+            st.info('請稍等約 10 秒鐘再按生成按鈕')
             if st.button('生成電子郵件、賀卡'):
                 with st.spinner('請稍等...'):
                     lang = text_language(occasion)
