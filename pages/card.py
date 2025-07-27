@@ -19,6 +19,9 @@ st.title("Greeting Card 賀卡")
 key = st.secrets['Gemini']['API_KEY']
 client = genai.Client(api_key=key)
 
+if 'email' not in st.session_state:
+     st.session_state.email = None
+
 def text_language(text):
         response = client.models.generate_content(
             model="gemini-2.5-flash", 
