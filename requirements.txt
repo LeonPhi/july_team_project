@@ -2,8 +2,11 @@ cmake
 setuptools
 dlib-bin
 deepface==0.0.93
+email_validator==2.2.0
 face_recognition_models @ git+https://github.com/ageitgey/face_recognition_models
 face_recognition @ git+https://github.com/thetoby9944/face_recognition
+google_api_python_client==2.177.0
+google_auth_oauthlib==1.2.2
 ipython==8.12.3
 opencv_python
 langchain_core==0.3.72
