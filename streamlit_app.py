@@ -1,3 +1,9 @@
+### OSError: [Errno 24] inotify instance limit reached (on cloud after deploy)
+### Solution: Add "inotify" to requirements.txt, 
+### Then add this to secrets.toml:
+### [server]
+### fileWatcherType = "none"
+
 import streamlit as st
 
 st.markdown(
@@ -14,6 +20,12 @@ st.markdown(
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+if "username" not in st.session_state:
+    st.session_state.username = None
+
+if "email" not in st.session_state:
+    st.session_state.email = None
+
 # --- PAGE SETUP ---
 home_page = st.Page(
     "pages/home.py",
@@ -23,11 +35,11 @@ home_page = st.Page(
 recipe_page = st.Page(
     "pages/recipe.py",
     title="Recipe",
-    icon=":material/chef_hat:",
+    icon=":material/chef_hat:"
 )
-accounting_page = st.Page(
-    "pages/accounting.py",
-    title="Accounting",
+expense_page = st.Page(
+    "pages/expense.py",
+    title="Bookkeeping",
     icon=":material/checkbook:",
 )
 music_page = st.Page(
@@ -64,7 +76,7 @@ about_page = st.Page(
 if st.session_state.logged_in:
     pg = st.navigation({
         "Homepage": [home_page],
-        "Programs": [recipe_page, accounting_page, music_page, card_page],
+        "Programs": [recipe_page, expense_page, music_page, card_page],
         "Info": [about_page],
     })
 else:
