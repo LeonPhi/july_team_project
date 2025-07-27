@@ -26,6 +26,9 @@ if "username" not in st.session_state:
 if "email" not in st.session_state:
     st.session_state.email = None
 
+if "credentials" not in st.session_state:
+    st.session_state.credentials = False
+
 # --- PAGE SETUP ---
 home_page = st.Page(
     "pages/home.py",
