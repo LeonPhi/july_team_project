@@ -63,7 +63,7 @@ def authorize_user():
     flow = Flow.from_client_secrets_file(
         'client_secret.json',
         scopes=['https://www.googleapis.com/auth/gmail.send'],
-        redirect_uri='http://localhost:8501'  # Change to actual streamlit app link when deploying
+        redirect_uri='https://dailygenie.streamlit.app'  # Change to actual streamlit app link when deploying
     )
     auth_url, _ = flow.authorization_url(prompt='consent')
     st.link_button("Authorize Gmail Access", auth_url)
