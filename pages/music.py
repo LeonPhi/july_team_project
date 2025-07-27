@@ -7,7 +7,7 @@ import webbrowser
 from utils.sidebar import render_sidebar
 
 st.title("Music 音樂 (Just for fun)")
-st.write("Trained mainly on non-Asian face data. Less accurate for Asian faces.")
+st.write("NOTE: Deepface trained mainly on non-Asian face data. Less accurate for Asian faces.")
 st.write('\n')
 
 lang = st.text_input(r"$\textsf{\Large Language 語言}$")
