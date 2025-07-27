@@ -49,7 +49,9 @@ def speech_to_text(key: int):
 
     if audio:
         audio = audio.read()
-        return generate(generate_language())
+        text = generate(generate_language())
+        st.write(text)
+        return text
     
 if __name__ == "__main__":
     st.title('語音辨識')
