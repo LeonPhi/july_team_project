@@ -83,11 +83,11 @@ def authorize_user():
     if 'code' in st.query_params:
         flow.fetch_token(code=st.query_params['code'])
         creds = flow.credentials
-        st.session_state['credentials'] = creds
+        st.session_state.credentials = creds
         st.success("Gmail Authorized!")
 
 def send_email(sender, reciever, subject, body):
-    service = build('gmail', 'v1', credentials=st.session_state['credentials'])
+    service = build('gmail', 'v1', credentials=st.session_state.credentials)
     message = MIMEText(body)
     message['to'] = reciever
     message['from'] = sender
@@ -115,6 +115,8 @@ authorize_user()
 reciever = st.text_input(r'$\textsf{請輸入收件者 E-mail (Gmail only):}$')
 
 if occasion:
+    if not st.session_state['credentials']:
+        st.info('Please authorize your Gmail.')
     if reciever:
         try:
             v = validate_email(reciever)
