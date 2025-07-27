@@ -78,7 +78,7 @@ def authorize_user():
         redirect_uri='http://localhost:8501'  # Change to actual streamlit app link when deploying
     )
     auth_url, _ = flow.authorization_url(prompt='consent')
-    st.link_button("Authorize Gmail Access", auth_url)
+    st.link_button("Authorize Gmail Access", auth_url, disabled=True) # Turn off 'disabled' after Auth verified
 
     if 'code' in st.query_params:
         flow.fetch_token(code=st.query_params['code'])
@@ -110,29 +110,35 @@ else:
 sender = st.session_state.email
 st.write('\n')
 st.text(f'你(寄件者)的 E-mail: {sender}')
+
+# Remove after Auth verified
+st.write(r'$\textsf{*很抱歉，尚未通過 OAuth 2.0 用戶端認證流程，寄送郵件功能這幾天無法使用。}$')
+st.write('Sorry, Gmail delivery feature is not available for the next few days as the OAuth 2.0 client authentication process has not been completed.')
+
 authorize_user()
 
-reciever = st.text_input(r'$\textsf{請輸入收件者 E-mail (Gmail only):}$')
+reciever = st.text_input(r'$\textsf{請輸入收件者 E-mail (Gmail only):}$', disabled=True) # Turn off 'disabled' after Auth verified
 
 if occasion:
-    if not st.session_state['credentials']:
-        st.info('Please authorize your Gmail.')
-    if reciever:
-        try:
-            v = validate_email(reciever)
-            reciever = v.normalized
+#    if not st.session_state['credentials']:
+#        st.info('Please authorize your Gmail.')
+#    if reciever:
+#        try:
+#            v = validate_email(reciever)
+#            reciever = v.normalized
             if st.button('生成電子郵件、賀卡'):
                 with st.spinner('請稍等...'):
                     lang = text_language(occasion)
                     text, image = create_image()
                     split_text = text.split(':', maxsplit=1)[1].split('\n', maxsplit=1)
                     subject, body = split_text[0].strip(), split_text[1].strip()
-                    if st.button("Send Email"):
-                        send_email(sender, reciever, subject, body)
-        except EmailNotValidError as e:
-            st.error('Invalid E-mail 無效的電子郵件: ' + str(e))
-    else:
-        st.info('請先輸入收件者的 E-mail.')
+#                    if st.button("Send Email"):
+#                        send_email(sender, reciever, subject, body)
+#        except EmailNotValidError as e:
+#            st.error('Invalid E-mail 無效的電子郵件: ' + str(e))
+#    else:
+#        st.info('請先輸入收件者的 E-mail.')
 
+# Uncomment above after Auth verified
 
 render_sidebar()
