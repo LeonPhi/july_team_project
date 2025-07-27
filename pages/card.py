@@ -15,6 +15,8 @@ from utils.sidebar import render_sidebar
 from utils.speech import speech_to_text
 
 st.title("Greeting Card 賀卡")
+st.write('\n\n')
+st.write('NOTE: Using Free "gemini-2.0-flash-preview-image-generation" AI model.')
 
 key = st.secrets['Gemini']['API_KEY']
 client = genai.Client(api_key=key)
