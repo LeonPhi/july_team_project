@@ -45,7 +45,6 @@ def create_image():
                     Details:{details}
 
                     **Don't ask for extra detail if empty, just generate a generic e-mail.**
-                    **Don't add any extra explanations of the prompt, only subject, email and greeting card.**
 
                     Please reply in {lang}.
                 """,
