@@ -83,35 +83,33 @@ def register_user(username, password, email, photo_path):
 
 st.title("📝 Register 註冊")
 
-with st.form("register_form"):
-    username = st.text_input(r"$\textsf{\Large Username}$")
-    password = st.text_input(r"$\textsf{\Large Password}$", type='password')
+username = st.text_input(r"$\textsf{\Large Username}$")
+password = st.text_input(r"$\textsf{\Large Password}$", type='password')
+
+if password:
+    result = zxcvbn(password, user_inputs=[username])
+    score = result['score']  # 0 to 4
+    suggestions = result['feedback']['suggestions']
+
     col1, col2 = st.columns([4,6]) 
-
-    # Check password strength
-    if st.session_state.get("submitted") and password:
-        result = zxcvbn(password, user_inputs=[username])
-        score = result['score']  # 0 to 4
-        suggestions = result['feedback']['suggestions']
-
-        with col1:
-            if score < 2:
-                st.write(r"$\textsf{Password Strength: 弱 Weak}$")
-            elif score == 2:
-                st.write(r"$\textsf{Password Strength: 好 Ok}$")
-            else:
-                st.write(r"$\textsf{Password Strength: 強 Strong}$")
-        with col2:
-            st.progress((score + 1) * 20)  # Converts 0–4 to 20–100%
-        
-        if suggestions:
-            st.markdown("**Suggestions:**")
-            for tip in suggestions:
-                st.write(f"• {tip}")
+    with col1:
+        if score < 2:
+            st.write(r"$\textsf{Password Strength: 弱 Weak}$")
+        elif score == 2:
+            st.write(r"$\textsf{Password Strength: 好 Ok}$")
         else:
-            st.success("Your password looks strong!")
+            st.write(r"$\textsf{Password Strength: 強 Strong}$")
+    with col2:
+        st.progress((score + 1) * 20)  # Converts 0–4 to 20–100%
+        
+    if suggestions:
+        st.markdown("**Suggestions:**")
+        for tip in suggestions:
+            st.write(f"• {tip}")
     else:
-        score = 0
+        st.success("Your password looks strong!")
+
+with st.form("register_form"):
 
     email = st.text_input(r"$\textsf{\Large Email (請使用 Gmail)}$")
 
@@ -124,16 +122,16 @@ with st.form("register_form"):
 if submitted:
     st.session_state["submitted"] = True
 
-    if score < 2:
-        st.warning('Password not strong enough')
-    else:
-        with st.spinner("請稍等..."):
-            create_table()
+    with st.spinner("請稍等..."):
+        create_table()
 
-            if not uploaded_photo and not camera_photo:
-                st.warning("📸 Please upload a profile photo for face recognition.")
-            elif not all([username, password, email]):
-                st.warning("⚠️ Please fill out all fields before submitting.")
+        if not uploaded_photo and not camera_photo:
+            st.warning("📸 Please upload a profile photo for face recognition.")
+        elif not all([username, password, email]):
+            st.warning("⚠️ Please fill out all fields before submitting.")
+        else:
+            if score < 2:
+                st.warning('Password not strong enough.')
             else:
                 if camera_photo:
                     photo_path = save_photo(camera_photo, username)
