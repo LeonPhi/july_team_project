@@ -21,4 +21,5 @@ tf-keras
 bcrypt==4.1.2
 Requests==2.32.4
 sqlalchemy
+zxcvbn
 streamlit==1.47.0
