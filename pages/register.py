@@ -1,10 +1,11 @@
 import streamlit as st
 import base64
 from sqlalchemy import create_engine, text
-from sqlalchemy.exc import IntegrityError
 from email_validator import validate_email, EmailNotValidError
 from zxcvbn import zxcvbn   # Password strength checker
 import bcrypt
+from streamlit_gsheets import GSheetsConnection
+import pandas as pd
 import os
 
 
@@ -26,24 +27,7 @@ page_bg_img = f"""
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-
-if 'submitted' not in st.session_state:
-    st.session_state.submitted = False
-
-conn = st.connection('sqlite', type='sql')
-
-# Function to create the table if it doesn't exist
-def create_table():
-    with conn.session as s:
-        s.execute(text('''
-            CREATE TABLE IF NOT EXISTS users (
-                username TEXT UNIQUE,
-                password TEXT,
-                email TEXT,
-                photo_path TEXT
-            )
-        '''))
-        s.commit()
+conn = st.connection('gsheets', type=GSheetsConnection)
 
 # Save uploaded photo to a directory
 def save_photo(photo, username):
@@ -59,27 +43,25 @@ def register_user(username, password, email, photo_path):
     v = validate_email(email)
     email = v.normalized
     
-    with conn.session as s:
-        hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        try:
-            s.execute(
-                text("""
-                    INSERT INTO users (username, password, email, photo_path)
-                    VALUES (:username, :password, :email, :photo_path)
-                """),
-                {
-                    "username": username,
-                    "password": hashed_pw,
-                    "email": email,
-                    "photo_path": photo_path
-                }
-            )
-            s.commit()
-            return True
-        except IntegrityError:
-            return False
-        finally:
-            s.commit()
+    existing_users = conn.read(worksheet="Users", usecols=list(range(4)), ttl=5)
+    if existing_users["username"].dropna(how='all').astype(str).str.contains(username).any():
+        return False
+    
+    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    user_data = pd.DataFrame(
+        [
+            {
+                'username':username,
+                'password':hashed_pw,
+                'email':email,
+                'photo_path':photo_path,
+            }
+        ]
+    )
+    updated_data = pd.concat([existing_users, user_data], ignore_index=True)
+    conn.update(worksheet='Users', data=updated_data)
+    return True
+
 
 st.title("📝 Register 註冊")
 
@@ -103,7 +85,7 @@ if password:
         st.progress((score + 1) * 20)  # Converts 0–4 to 20–100%
         
     if suggestions:
-        st.markdown("**Suggestions:**")
+        st.write("⚠️" + r"$\textsf{Suggestions:}$")
         for tip in suggestions:
             st.write(f"• {tip}")
     else:
@@ -120,13 +102,11 @@ with st.form("register_form"):
     submitted = st.form_submit_button("Register")
 
 if submitted:
-    st.session_state["submitted"] = True
 
     with st.spinner("請稍等..."):
-        create_table()
 
         if not uploaded_photo and not camera_photo:
-            st.warning("📸 Please upload a profile photo for face recognition.")
+            st.warning("📷 Please upload a profile photo for face recognition.")
         elif not all([username, password, email]):
             st.warning("⚠️ Please fill out all fields before submitting.")
         else:
@@ -152,3 +132,4 @@ if submitted:
                         st.error(f"🚨 Registration failed: {e}")
                 except Exception as e:
                     st.error(f"🚨 Registration failed: {e}")
+                    
