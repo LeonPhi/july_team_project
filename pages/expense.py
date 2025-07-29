@@ -25,7 +25,7 @@ page_bg_img = f"""
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
 
-st.title("Bookkeeping 記帳")
+st.title("Bookkeeping 記帳 (尚未完成)")
 
 client = genai.Client(
         api_key=st.secrets['Gemini']['API_KEY']
