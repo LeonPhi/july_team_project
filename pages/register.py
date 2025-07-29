@@ -1,6 +1,5 @@
 import streamlit as st
 import base64
-from sqlalchemy import create_engine, text
 from email_validator import validate_email, EmailNotValidError
 from zxcvbn import zxcvbn   # Password strength checker
 import bcrypt
@@ -27,9 +26,10 @@ page_bg_img = f"""
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-conn = st.connection('gsheets', type=GSheetsConnection)
 
-# Save uploaded photo to a directory
+conn = st.connection('gsheets', type=GSheetsConnection) # Google Sheets Connection
+                      
+# Save uploaded photo to Firebase
 def save_photo(photo, username):
     directory = "profile_photos"
     os.makedirs(directory, exist_ok=True)
@@ -54,7 +54,7 @@ def register_user(username, password, email, photo_path):
                 'username':username,
                 'password':hashed_pw,
                 'email':email,
-                'photo_path':photo_path,
+                'photo_path': photo_path,
             }
         ]
     )
@@ -132,4 +132,3 @@ if submitted:
                         st.error(f"🚨 Registration failed: {e}")
                 except Exception as e:
                     st.error(f"🚨 Registration failed: {e}")
-                    
