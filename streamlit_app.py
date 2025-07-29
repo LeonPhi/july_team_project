@@ -12,10 +12,27 @@ st.markdown(
             [data-testid="stSidebarNavItems"] {
                 max-height: none;
             }
-           </style>
-           """,
+            </style>
+            """,
             unsafe_allow_html=True
         )
+
+st.markdown(
+    """
+    <style>
+    /* Target the span inside the navigation link */
+    div[data-testid="stSidebarNav"] ul li a span {
+        font-size: 16px !important;
+    }
+
+    /* Optional: tweak section headers if used */
+    div[data-testid="stSidebarNav"] header {
+        font-size: 24px !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -44,6 +61,11 @@ expense_page = st.Page(
     "pages/expense.py",
     title="Bookkeeping",
     icon=":material/checkbook:",
+)
+identify_page = st.Page(
+    "pages/item_identify.py",
+    title="Identify Item",
+    icon=":material/feature_search:",
 )
 music_page = st.Page(
     "pages/music.py",
@@ -79,7 +101,7 @@ about_page = st.Page(
 if st.session_state.logged_in:
     pg = st.navigation({
         "Homepage": [home_page],
-        "Programs": [recipe_page, expense_page, music_page, card_page],
+        "Programs": [recipe_page, expense_page, identify_page, music_page, card_page],
         "Info": [about_page],
     })
 else:
@@ -90,7 +112,7 @@ else:
 
 # --- SHARED ON ALL PAGES ---
 st.logo("assets/codingisfun_logo.png")
-st.sidebar.markdown("Made with ❤️ by Team")
+st.sidebar.subheader("Made with ❤️ by Team")
 
 
 # --- RUN NAVIGATION ---
