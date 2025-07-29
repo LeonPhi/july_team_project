@@ -4,25 +4,12 @@ import numpy as np
 import face_recognition
 import base64
 import os
-import io
 from sqlalchemy import create_engine, text
 from sqlite3 import IntegrityError
-import requests
+from streamlit_gsheets import GSheetsConnection
 import bcrypt
 
-conn = st.connection('sqlite', type='sql')
-
-# Initiate Table
-with conn.session as s: 
-    s.execute(text('''
-        CREATE TABLE IF NOT EXISTS users (
-            username TEXT UNIQUE,
-            password TEXT,
-            email TEXT,
-            photo_path TEXT
-        )
-    '''))
-    s.commit()
+conn = st.connection('gsheets', type=GSheetsConnection)
 
 # Enlarged gradient heading
 st.markdown("""
@@ -121,20 +108,20 @@ change_theme_bg(st.session_state.theme)
 
 # Connect to database
 def verify_credentials(username, password):
-    with conn.session as s:
-        result = s.execute(
-            text("SELECT username, password, email, photo_path FROM users WHERE username=:username"),
-            {"username": username}
-        )
-        user = result.fetchone()
+    existing_users = conn.read(worksheet="Users", usecols=list(range(4)), ttl=5)
+    existing_users = existing_users.dropna(how='all')
+    existing_users["username"] = existing_users["username"].astype(str)
 
-    if user:
-        stored_hash = user[1]
+    # Search for the matching username
+    matching_user = existing_users[existing_users["username"] == username]
+
+    if not matching_user.empty:
+        stored_hash = matching_user.iloc[0]["password"]
         if bcrypt.checkpw(password.encode(), stored_hash.encode()):
             return {
-                "username": user[0],
-                "email": user[2],
-                "photo_path": user[3]
+                "username": matching_user.iloc[0]["username"],
+                "email": matching_user.iloc[0]["email"],
+                "photo_path": matching_user.iloc[0]["photo_path"]
             }
     return None
 
@@ -163,14 +150,16 @@ if use_face_login:
 
         # Check known images
         if unknown_encoding.any():
-            with conn.session as s:
-                result = s.execute(text("SELECT username, email, photo_path FROM users"))
-                users = result.fetchall()
+            existing_users = conn.read(worksheet="Users", usecols=["username", "email", "photo_path"], ttl=5)
+            existing_users = existing_users.dropna(subset=["photo_path"])  # Make sure we have valid photo paths
 
             user_result = {"status": "fail"}
 
-            for user in users:
-                username, email, photo_path = user
+            for _, user in existing_users.iterrows():
+                username = str(user["username"])
+                email = str(user["email"])
+                photo_path = str(user["photo_path"])
+
                 known_image_path = os.path.join("profile_photos", os.path.basename(photo_path))
 
                 if os.path.exists(known_image_path):
@@ -178,8 +167,8 @@ if use_face_login:
                     known_encodings = face_recognition.face_encodings(known_image)
                     if not known_encodings:
                         continue
-                result = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
-                if result[0]:
+                match = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
+                if match[0]:
                     user_result = {
                         "status": "success",
                         "data": {
@@ -188,14 +177,12 @@ if use_face_login:
                             "email": email,
                         }
                     }
-                else:
-                    user_result = {
-                        "status": "fail",
-                    }
+                    break
         else:
             user_result = {
                         "status": "none",
                     }
+            
         if user_result["status"] == "success":
             st.success("🎉 Face Login Successful")
             st.session_state.logged_in = True
@@ -206,6 +193,7 @@ if use_face_login:
                 if k != "photo":
                     st.markdown(f"**{k.replace('_',' ').title()}:** {v}")
             st.rerun()
+            
         elif user_result["status"]=="fail":
             st.error('Face not recognized.')
         else:
