@@ -23,3 +23,4 @@ Requests==2.32.4
 sqlalchemy
 zxcvbn
 streamlit==1.47.0
+st-gsheets-connection
