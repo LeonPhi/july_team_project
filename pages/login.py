@@ -4,8 +4,6 @@ import numpy as np
 import face_recognition
 import base64
 import os
-from sqlalchemy import create_engine, text
-from sqlite3 import IntegrityError
 from streamlit_gsheets import GSheetsConnection
 import bcrypt
 
