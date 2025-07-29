@@ -127,6 +127,7 @@ def verify_credentials(username, password):
 
 # Face login
 if use_face_login:
+    st.write('⚠️由於 Streamlit 平台會不定時重製，因此已註冊帳號的 Face Login 功能會在重製後失效，請使用傳統文字 Login。')
     st.write("### 📷 Face Login")
     camera_photo = st.camera_input("Take a Snapshot")
 
@@ -161,23 +162,25 @@ if use_face_login:
                 photo_path = str(user["photo_path"])
 
                 known_image_path = os.path.join("profile_photos", os.path.basename(photo_path))
-
                 if os.path.exists(known_image_path):
                     known_image = face_recognition.load_image_file(known_image_path)
                     known_encodings = face_recognition.face_encodings(known_image)
                     if not known_encodings:
                         continue
-                match = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
-                if match[0]:
-                    user_result = {
-                        "status": "success",
-                        "data": {
-                            "photo": known_image,
-                            "username": username,
-                            "email": email,
+
+                    match = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
+                    if match[0]:
+                        user_result = {
+                            "status": "success",
+                            "data": {
+                                "photo": known_image,
+                                "username": username,
+                                "email": email,
+                            }
                         }
-                    }
-                    break
+                        break
+                else:
+                    continue
         else:
             user_result = {
                         "status": "none",
@@ -195,7 +198,7 @@ if use_face_login:
             st.rerun()
             
         elif user_result["status"]=="fail":
-            st.error('Face not recognized.')
+            st.error('Face not recognized. (如果你已經註冊過，那有可能 Streamlit 重製了)')
         else:
             pass
 
