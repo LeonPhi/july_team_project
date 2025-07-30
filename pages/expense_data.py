@@ -38,6 +38,10 @@ def get_week_of_month(date):
 
 df = conn.read(worksheet="Expenses", usecols=["username", "date", "type", "total"], ttl=5)
 user_data = df[df["username"] == st.session_state.username].copy()
+if user_data.empty:
+    st.warning("尚未有任何消費記錄。歡迎開始記帳！")
+    st.stop()  # Prevents further execution
+
 user_data["date"] = pd.to_datetime(user_data["date"])
 
 type_color_map = {
