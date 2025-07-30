@@ -62,6 +62,11 @@ expense_page = st.Page(
     title="Bookkeeping",
     icon=":material/checkbook:",
 )
+expense_data_page = st.Page(
+    "pages/expense_data.py",
+    title="Expense Data",
+    icon=":material/paid:",
+)
 identify_page = st.Page(
     "pages/item_identify.py",
     title="Identify Item",
@@ -100,8 +105,8 @@ about_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 if st.session_state.logged_in:
     pg = st.navigation({
-        "Homepage": [home_page],
-        "Programs": [recipe_page, expense_page, identify_page, music_page, card_page],
+#        "Homepage": [home_page],
+        "Programs": [recipe_page, expense_page, expense_data_page, identify_page, music_page, card_page],
         "Info": [about_page],
     })
 else:
