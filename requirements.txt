@@ -16,6 +16,7 @@ numpy
 inotify
 Pillow==11.3.0
 protobuf
+plotly
 tensorflow
 tf-keras
 bcrypt==4.1.2
