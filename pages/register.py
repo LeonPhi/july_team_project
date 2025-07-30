@@ -1,5 +1,8 @@
 import streamlit as st
 import base64
+from PIL import Image, UnidentifiedImageError
+import numpy as np
+import face_recognition
 from email_validator import validate_email, EmailNotValidError
 from zxcvbn import zxcvbn   # Password strength checker
 import bcrypt
@@ -103,31 +106,38 @@ with st.form("register_form"):
 if submitted:
 
     with st.spinner("請稍等..."):
-
         if not uploaded_photo and not camera_photo:
             st.warning("📷 Please upload a profile photo for face recognition.")
         elif not all([username, password, email]):
             st.warning("⚠️ Please fill out all fields before submitting.")
         else:
-            if score < 2:
-                st.warning('Password not strong enough.')
+            img = Image.open(camera_photo).convert('RGB')  # Ensure RGB format
+            img_np = np.array(img)
+
+            # Now detect face
+            unknown_face_encodings = face_recognition.face_encodings(img_np)
+            if not unknown_face_encodings:
+                st.error('No face detected in captured image.')
             else:
-                if camera_photo:
-                    photo_path = save_photo(camera_photo, username)
+                if score < 2:
+                    st.warning('Password not strong enough.')
                 else:
-                    photo_path = save_photo(uploaded_photo, username)
-                try:
-                    success = register_user(username, password, email, photo_path)
-                    if success:
-                        st.success(f"🎉 Welcome, {username}! You’ve been registered.")
-                        st.switch_page("pages/login.py")
-                        st.image(uploaded_photo, caption="Saved Profile Photo", width=180)
+                    if camera_photo:
+                        photo_path = save_photo(camera_photo, username)
                     else:
-                        st.error("😢 Username already taken. Try another one.")
-                except AttributeError as e:
-                    if "'NoneType' object has no attribute 'format'" in str(e):
-                        pass  # Silently ignore this harmless error
-                    else:
+                        photo_path = save_photo(uploaded_photo, username)
+                    try:
+                        success = register_user(username, password, email, photo_path)
+                        if success:
+                            st.success(f"🎉 Welcome, {username}! You’ve been registered.")
+                            st.switch_page("pages/login.py")
+                            st.image(uploaded_photo, caption="Saved Profile Photo", width=180)
+                        else:
+                            st.error("😢 Username already taken. Try another one.")
+                    except AttributeError as e:
+                        if "'NoneType' object has no attribute 'format'" in str(e):
+                            pass  # Silently ignore this harmless error
+                        else:
+                            st.error(f"🚨 Registration failed: {e}")
+                    except Exception as e:
                         st.error(f"🚨 Registration failed: {e}")
-                except Exception as e:
-                    st.error(f"🚨 Registration failed: {e}")
