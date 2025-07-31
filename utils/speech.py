@@ -34,6 +34,8 @@ def speech_to_text(key: int):
         return response.text
 
     def generate(language):
+        if language == False:
+            return False
         try:
             response = client.models.generate_content(
                 model="gemini-2.5-flash", 
