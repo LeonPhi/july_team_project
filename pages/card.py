@@ -125,8 +125,13 @@ use_speech = st.toggle(r"$\textsf{\Large 使用語音輸入}$", value=True)
 if use_speech:
     st.text('請輸入節日、場合類型、慶祝事情等等')
     occasion = speech_to_text(1)
+    if occasion == False:
+        st.error("AI overloaded. 請慢一點輸入資料或按生成。")
+
     st.text('可以加詳細說明 (如寄件者、收件者姓名，或其他要加在郵件或卡片裡的事物):')
     details = speech_to_text(2)
+    if details == False:
+        st.error("AI overloaded. 請慢一點輸入資料或按生成。")
 else:
     occasion = st.text_input(r'$\textsf{請輸入節日、場合類型、慶祝事情等等}$')
     details = st.text_input(r'$\textsf{可以加詳細說明 (如寄件者、收件者姓名和關係，或其他要加在郵件或卡片裡的事物):}$')
