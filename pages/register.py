@@ -33,6 +33,29 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 conn = st.connection('gsheets', type=GSheetsConnection) # Google Sheets Connection
                       
 # Save uploaded photo to Firebase
+def check_face(uploaded_photo, camera_photo):
+    if camera_photo is None:
+        img = Image.open(uploaded_photo).convert('RGB')  # Ensure RGB format
+        img_np = np.array(img)
+
+        # Now detect face
+        unknown_face_encodings = face_recognition.face_encodings(img_np)
+        if not unknown_face_encodings:
+            return False
+        else:
+            return True
+    else:
+        img = Image.open(camera_photo).convert('RGB')  # Ensure RGB format
+        img_np = np.array(img)
+
+        # Now detect face
+        unknown_face_encodings = face_recognition.face_encodings(img_np)
+        if not unknown_face_encodings:
+            return False
+        else:
+            return True
+
+
 def save_photo(photo, username):
     directory = "profile_photos"
     os.makedirs(directory, exist_ok=True)
@@ -111,21 +134,14 @@ if submitted:
         elif not all([username, password, email]):
             st.warning("⚠️ Please fill out all fields before submitting.")
         else:
-            img = Image.open(camera_photo).convert('RGB')  # Ensure RGB format
-            img_np = np.array(img)
-
-            # Now detect face
-            unknown_face_encodings = face_recognition.face_encodings(img_np)
-            if not unknown_face_encodings:
-                st.error('No face detected in captured image.')
-            else:
+            if check_face(uploaded_photo, camera_photo):
                 if score < 2:
                     st.warning('Password not strong enough.')
                 else:
                     if camera_photo:
                         photo_path = save_photo(camera_photo, username)
                     else:
-                        photo_path = save_photo(uploaded_photo, username)
+                            photo_path = save_photo(uploaded_photo, username)
                     try:
                         success = register_user(username, password, email, photo_path)
                         if success:
@@ -141,3 +157,5 @@ if submitted:
                             st.error(f"🚨 Registration failed: {e}")
                     except Exception as e:
                         st.error(f"🚨 Registration failed: {e}")
+            else:
+                st.error('No face detected in captured image.')
