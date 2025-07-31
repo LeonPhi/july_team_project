@@ -19,7 +19,7 @@ def speech_to_text(key: int):
             contents=[
                 """Please return what language this audio speech is in.
                     Example: AUDIO- I am 10 years old. RETURN- English
-                    Example: AUDIO- 我現在十歲。 RETURN- Chinese ***(DEFAULT CHINESE: Traditional Chinese***
+                    Example: AUDIO- 我現在十歲。 RETURN- Chinese ***(DEFAULT CHINESE: Traditional Chinese)***
                     Example: AUDIO- Ich bin sechzehn Jahre alt. RETURN- German""",
                 types.Part.from_bytes(
                     data=audio,
