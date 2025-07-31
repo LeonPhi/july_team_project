@@ -47,10 +47,10 @@ if "credentials" not in st.session_state:
     st.session_state.credentials = False
 
 # --- PAGE SETUP ---
-home_page = st.Page(
+vote_page = st.Page(
     "pages/home.py",
-    title="Home",
-    icon=":material/home:",
+    title="Vote!",
+    icon=":material/how_to_vote:",
 )
 recipe_page = st.Page(
     "pages/recipe.py",
@@ -105,7 +105,7 @@ about_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 if st.session_state.logged_in:
     pg = st.navigation({
-#        "Homepage": [home_page],
+        "Voting": [vote_page],
         "Programs": [recipe_page, expense_page, expense_data_page, identify_page, music_page, card_page],
         "Info": [about_page],
     })
