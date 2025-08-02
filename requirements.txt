@@ -25,3 +25,4 @@ sqlalchemy
 zxcvbn
 streamlit==1.47.0
 st-gsheets-connection
+appwrite==11.1.0
