@@ -32,26 +32,29 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 # --- HERO SECTION ---
 col1, col2 = st.columns(2, gap="small", vertical_alignment="center")
 with col1:
-    st.image("./assets/logo.png", width=230)
+    st.image("./assets/robot_logo.webp", width=230)
 
 with col2:
-    st.title("長者生活通", anchor=False)
+    st.title("DailyGenie生活通", anchor=False)
 #    if st.button("✉️ Contact Me"):
 #        show_contact_form()
 
 
 # --- EXPERIENCE & QUALIFICATIONS ---
 st.write("\n")
-st.write(r"$\textsf{結合語音、圖像與情緒辨識等 AI 技術的長者智慧生活 App，}$")
-st.write(r"$\textsf{致力於用科技陪伴並協助長者更安心、便利地過每一天。}$")
+st.write(r"$\textsf{結合語音、圖像與情緒辨識等 AI 技術的智慧生活 App，}$")
+st.write(r"$\textsf{致力於用科技陪伴，便利地過每一天。}$")
 st.subheader("Team Members", anchor=False)
 st.write(
     """
-    - 張揚恩
-    - 沈柏昱
-    - 胡華容
-    - 杜羽喬
-    - 楊尹軒
+    規劃:
+    - 揚恩
+    - 柏昱
+    - 華容
+    - 羽喬
+
+    編碼: 
+    - 柏昱 Leon  - - - codekazam@gmail.com
     """
 )
 
