@@ -4,10 +4,25 @@ import numpy as np
 import face_recognition
 import base64
 import os
+from io import BytesIO
 from streamlit_gsheets import GSheetsConnection
+from appwrite.client import Client
+from appwrite.services.storage import Storage
 import bcrypt
 
 conn = st.connection('gsheets', type=GSheetsConnection)
+
+# Appwrite Connection
+endpoint = st.secrets["appwrite"]["endpoint"]
+project_id = st.secrets["appwrite"]["project_id"]
+api_key = st.secrets["appwrite"]["api_key"]
+bucket_id = st.secrets["appwrite"]["bucket_id"]
+
+client = Client()
+client.set_endpoint(endpoint) \
+      .set_project(project_id) \
+      .set_key(api_key)
+storage = Storage(client)
 
 # Enlarged gradient heading
 st.markdown("""
@@ -104,6 +119,12 @@ def change_theme_bg(theme):
 # Apply selected theme
 change_theme_bg(st.session_state.theme)
 
+# Load photos from Appwrite (added caching to call API fewer times, and also speed up the app)
+@st.cache_resource
+def get_photo_from_appwrite(file_id):
+    file = storage.get_file_download(bucket_id=bucket_id, file_id=file_id)
+    return Image.open(BytesIO(file))
+
 # Connect to database
 def verify_credentials(username, password):
     existing_users = conn.read(worksheet="Users", usecols=list(range(4)), ttl=5)
@@ -119,7 +140,7 @@ def verify_credentials(username, password):
             return {
                 "username": matching_user.iloc[0]["username"],
                 "email": matching_user.iloc[0]["email"],
-                "photo_path": matching_user.iloc[0]["photo_path"]
+                "photo_id": matching_user.iloc[0]["photo_id"]
             }
     return None
 
@@ -149,36 +170,35 @@ if use_face_login:
 
         # Check known images
         if unknown_encoding.any():
-            existing_users = conn.read(worksheet="Users", usecols=["username", "email", "photo_path"], ttl=5)
-            existing_users = existing_users.dropna(subset=["photo_path"])  # Make sure we have valid photo paths
+            existing_users = conn.read(worksheet="Users", usecols=["username", "email", "photo_id"], ttl=5)
+            existing_users = existing_users.dropna(subset=["photo_id"])  # Make sure we have valid photo paths
 
             user_result = {"status": "fail"}
 
             for _, user in existing_users.iterrows():
                 username = str(user["username"])
                 email = str(user["email"])
-                photo_path = str(user["photo_path"])
+                photo_id = str(user["photo_id"])
 
-                known_image_path = os.path.join("profile_photos", os.path.basename(photo_path))
-                if os.path.exists(known_image_path):
-                    known_image = face_recognition.load_image_file(known_image_path)
-                    known_encodings = face_recognition.face_encodings(known_image)
-                    if not known_encodings:
-                        continue
-
-                    match = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
-                    if match[0]:
-                        user_result = {
-                            "status": "success",
-                            "data": {
-                                "photo": known_image,
-                                "username": username,
-                                "email": email,
-                            }
-                        }
-                        break
-                else:
+                try:
+                    known_image = get_photo_from_appwrite(photo_id)
+                    known_image_np = np.array(known_image)
+                    known_encodings = face_recognition.face_encodings(known_image_np)
+                except Exception as e:
+                    st.warning(f"Failed to load image for {username}: {e}")
                     continue
+
+                match = face_recognition.compare_faces([known_encodings[0]], unknown_encoding, tolerance=0.4)
+                if match[0]:
+                    user_result = {
+                        "status": "success",
+                        "data": {
+                            "photo": known_image,
+                            "username": username,
+                            "email": email,
+                        }
+                    }
+                    break
         else:
             user_result = {
                         "status": "none",
@@ -226,5 +246,10 @@ else:
 
 # Registration prompt
 st.markdown("---")
-if st.button("New User? Create Profile"):
-    st.switch_page("pages/register.py")
+col1, col2 = st.columns([6,5])
+
+with col1:
+    if st.button("New User? Create Profile"):
+        st.switch_page("pages/register.py")
+with col2:
+    st.write(r"$\textsf{\scriptsize 柏昱 Leon: codekazam@gmail.com}$")
