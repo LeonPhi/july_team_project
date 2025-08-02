@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import time
 from PIL import Image, UnidentifiedImageError
 import numpy as np
 import face_recognition
@@ -164,6 +165,7 @@ if submitted:
                         success = register_user(username, password, email, photo_id)
                         if success:
                             st.success(f"🎉 Welcome, {username}! You’ve been registered.")
+                            time.sleep(2)
                             st.switch_page("pages/login.py")
                         else:
                             st.error("😢 Username already taken. Try another one.")
