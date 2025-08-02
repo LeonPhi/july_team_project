@@ -82,11 +82,7 @@ if already_voted:
 # Hasn't voted yet
 else:
     st.write(r'$\textsf{\Large 請選擇你最喜歡的功能:}$')
-    st.write("(每個功能先用用看再投票)")
-    st.write('\n')
-    st.write('\n')
     st.write(r'$\textsf{\Large Please choose your favorite program/function:}$')
-    st.write("(Try out all the programs/functions before voting)")
 
     vote = st.selectbox("功能 Programs", [
                                             "Recipe 食譜推薦",
