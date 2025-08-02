@@ -30,6 +30,7 @@ client = genai.Client(
 )
 
 st.title('Identify Item 物品辨識')
+st.write(r"$\textsf{\Large (也可以翻譯照片中的文字)}$")
 
 lang = st.text_input(r"$\textsf{\Large Language:}$")
 
@@ -67,6 +68,7 @@ if photo and st.button('辨識物品'):
             ]
         )
         st.text_area('AI', response.text, height=400)
+
 
 
 render_sidebar()
