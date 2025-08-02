@@ -7,6 +7,10 @@ from email_validator import validate_email, EmailNotValidError
 from zxcvbn import zxcvbn   # Password strength checker
 import bcrypt
 from streamlit_gsheets import GSheetsConnection
+from appwrite.client import Client
+from appwrite.services.storage import Storage
+from appwrite.input_file import InputFile
+from appwrite.id import ID
 import pandas as pd
 import os
 
@@ -31,8 +35,20 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 
 
 conn = st.connection('gsheets', type=GSheetsConnection) # Google Sheets Connection
+
+# Appwrite Connection
+endpoint = st.secrets["appwrite"]["endpoint"]
+project_id = st.secrets["appwrite"]["project_id"]
+api_key = st.secrets["appwrite"]["api_key"]
+bucket_id = st.secrets["appwrite"]["bucket_id"]
+
+client = Client()
+client.set_endpoint(endpoint) \
+      .set_project(project_id) \
+      .set_key(api_key)
+storage = Storage(client)
                       
-# Save uploaded photo to Firebase
+# Check if there is a face in the photo
 def check_face(uploaded_photo, camera_photo):
     if camera_photo is None:
         img = Image.open(uploaded_photo).convert('RGB')  # Ensure RGB format
@@ -55,38 +71,40 @@ def check_face(uploaded_photo, camera_photo):
         else:
             return True
 
-
+# Save the photo to Appwrite
 def save_photo(photo, username):
-    directory = "profile_photos"
-    os.makedirs(directory, exist_ok=True)
-    filepath = os.path.join(directory, f"{username}.jpg")
-    with open(filepath, "wb") as f:
-        f.write(photo.getbuffer())
-    return filepath
+    input_file = InputFile.from_bytes(photo.getbuffer(), filename=f"{username}.jpg")
+    result = storage.create_file(
+        bucket_id=bucket_id,  # Replace with your actual bucket ID
+        file_id=ID.unique(),
+        file=input_file
+    )
+    return result["$id"]
 
 # Function to add new user
-def register_user(username, password, email, photo_path):
+def register_user(username, password, email, photo_id):
     v = validate_email(email)
     email = v.normalized
-    
+
     existing_users = conn.read(worksheet="Users", usecols=list(range(4)), ttl=5)
     if existing_users["username"].dropna(how='all').astype(str).str.contains(username).any():
         return False
-    
+
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     user_data = pd.DataFrame(
         [
             {
-                'username':username,
-                'password':hashed_pw,
-                'email':email,
-                'photo_path': photo_path,
+                'username': username,
+                'password': hashed_pw,
+                'email': email,
+                'photo_id': photo_id,  # Store Appwrite file ID
             }
         ]
     )
     updated_data = pd.concat([existing_users, user_data], ignore_index=True)
     conn.update(worksheet='Users', data=updated_data)
     return True
+
 
 st.title("📝 Register 註冊")
 
@@ -139,15 +157,14 @@ if submitted:
                     st.warning('Password not strong enough.')
                 else:
                     if camera_photo:
-                        photo_path = save_photo(camera_photo, username)
+                        photo_id = save_photo(camera_photo, username)
                     else:
-                            photo_path = save_photo(uploaded_photo, username)
+                        photo_id = save_photo(uploaded_photo, username)
                     try:
-                        success = register_user(username, password, email, photo_path)
+                        success = register_user(username, password, email, photo_id)
                         if success:
                             st.success(f"🎉 Welcome, {username}! You’ve been registered.")
                             st.switch_page("pages/login.py")
-                            st.image(uploaded_photo, caption="Saved Profile Photo", width=180)
                         else:
                             st.error("😢 Username already taken. Try another one.")
                     except AttributeError as e:
