@@ -253,4 +253,5 @@ with col1:
     if st.button("New User? Create Profile"):
         st.switch_page("pages/register.py")
 with col2:
-    st.write(r"$\textsf{\scriptsize 柏昱 Leon: codekazam@gmail.com}$")
+    st.write(r"$\textsf{\scriptsize 柏昱 Leon: leon1618phi@gmail.com}$")
+
