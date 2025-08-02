@@ -3,7 +3,7 @@ from PIL import Image, UnidentifiedImageError
 import numpy as np
 import face_recognition
 import base64
-import os
+import time
 from io import BytesIO
 from streamlit_gsheets import GSheetsConnection
 from appwrite.client import Client
@@ -146,7 +146,6 @@ def verify_credentials(username, password):
 
 # Face login
 if use_face_login:
-    st.write('⚠️由於 Streamlit 平台會不定時重製，因此已註冊帳號的 Face Login 功能會在重製後失效，請使用傳統文字 Login。')
     st.write("### 📷 Face Login")
     camera_photo = st.camera_input("Take a Snapshot")
 
@@ -213,10 +212,11 @@ if use_face_login:
             for k, v in user_result["data"].items():
                 if k != "photo":
                     st.markdown(f"**{k.replace('_',' ').title()}:** {v}")
+            time.sleep(2)
             st.rerun()
             
         elif user_result["status"]=="fail":
-            st.error('Face not recognized. (如果你已經註冊過，那有可能 Streamlit 重製了)')
+            st.error('Face not recognized.')
         else:
             pass
 
@@ -240,6 +240,7 @@ else:
             }
             for k, v in user_data.items():
                 st.markdown(f"**{k.replace('_',' ').title()}:** {v}")
+            time.sleep(2)
             st.rerun()
         else:
             st.error("Invalid username or password")
